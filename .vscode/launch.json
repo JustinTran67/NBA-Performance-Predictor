@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Django",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/NBApredictions/manage.py",
+            "args": [
+                "runserver"
+            ],
+            "django": true,
+            "autoReload": {
+                "enable": true
+            },
+            "python": "${workspaceFolder}/backend/venv/bin/python",
+            "cwd": "${workspaceFolder}/backend/NBApredictions",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "NBApredictions.settings"
+            },
+            "console": "integratedTerminal"
+        }
+    ]
+}
