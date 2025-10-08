@@ -1,2 +1,2 @@
 # NBA-Performance-Predictor
-App that records NBA player performances and history to generate predictions for how they will perform in future games.
+App that utilizes a pretrained AI model with data of NBA player history to generate predictions for how they will perform in future games.
