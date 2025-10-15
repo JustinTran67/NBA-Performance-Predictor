@@ -8,7 +8,7 @@ class PlayerAdmin(admin.ModelAdmin):
     
 @admin.register(SeasonStat)
 class SeasonStatAdmin(admin.ModelAdmin):
-    list_display = ('player', 'season', 'team', 'games_played', 'points', 'rebounds', 'assists')
+    list_display = ('player', 'season', 'team', 'games_played', 'points', 'rebounds', 'assists', 'blocks', 'steals')
     list_filter = ('season', 'team')
 
 @admin.register(Prediction)
