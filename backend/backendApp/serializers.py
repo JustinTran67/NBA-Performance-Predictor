@@ -14,3 +14,11 @@ class SeasonStatSerializer(serializers.ModelSerializer):
         model = SeasonStat
         fields = '__all__'
 
+#I dont even know if this is useful (figure out if this is useful)
+class PredictionSerializer(serializers.ModelSerializer):
+    player = PlayerSerializer(read_only=True)
+
+    class Meta:
+        model = Prediction
+        fields = '__all__'
+

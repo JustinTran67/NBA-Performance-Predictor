@@ -1,10 +1,12 @@
 import './App.css';
-import Message from './components/message';
+import SeasonStat from './components/SeasonStat';
+import Predict from './components/Predict';
 
 function App() {
   return (
     <div className="App">
-      <Message />
+      <SeasonStat />
+      <Predict />
     </div>
   );
 }
