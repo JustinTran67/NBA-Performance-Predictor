@@ -33,7 +33,8 @@ class SeasonStat(models.Model):
     class Meta:
         unique_together = ('player', 'season', 'team')
         ordering = ['player', 'season']
-    
+
+#Might not need this model, but keeping for now.    
 class Prediction(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='predictions')
     season = models.CharField(max_length=10)

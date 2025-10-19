@@ -5,7 +5,7 @@ export default function Predict() {
   const [predictedPoints, setPredictedPoints] = useState(null);
 
   const postPrediction = () => {
-    //const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYwNjY4NDExLCJpYXQiOjE3NjA2NjgxMTEsImp0aSI6Ijc4N2QyOTdhZDEyOTQzNjJhNTkyYWE2ZDA1NGI5NzQzIiwidXNlcl9pZCI6IjEifQ.Kzv-IiFql-to5No7WAmSWwd898KizEgX7tvu4inOQxU";
+    //const token = "";
 
     fetch('http://localhost:8000/api/predictions/predict/', {
       method: 'POST',

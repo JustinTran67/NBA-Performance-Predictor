@@ -1,14 +1,13 @@
-from ast import Is
-from rest_framework import viewsets, filters, status #what is status?
-from rest_framework.response import Response #what is Response?
-from rest_framework.decorators import action #what is action?
+from rest_framework import viewsets, filters, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from .models import Player, SeasonStat, Prediction
-from .serializers import PlayerSerializer, SeasonStatSerializer, PredictionSerializer
+from .serializers import PlayerSerializer, SeasonStatSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 import joblib
-import numpy as np #understand the role of this
-import os #what is this?
-from django.conf import settings #What is this?
+import numpy as np
+import os
+from django.conf import settings
 
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
@@ -33,7 +32,6 @@ class SeasonStatViewSet(viewsets.ModelViewSet):
         return SeasonStat.objects.all()
 
 class PredictionViewSet(viewsets.ModelViewSet):
-    #LEARN HOW ALL OF THIS WORKS! WHY NO SERIALIZER_CLASS?
     permission_classes = [AllowAny] #TODO: switch back to IsAuthenticatedOrReadOnly later
     model_path = os.path.join(settings.BASE_DIR, 'ml_models', 'nba_predictor.pkl')
     model = joblib.load(model_path)
