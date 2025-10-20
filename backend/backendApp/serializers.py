@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Player, SeasonStat, Prediction
+from .models import Player, SeasonStat
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:

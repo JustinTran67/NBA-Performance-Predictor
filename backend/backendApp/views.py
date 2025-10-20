@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Player, SeasonStat, Prediction
+from .models import Player, SeasonStat
 from .serializers import PlayerSerializer, SeasonStatSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 import joblib

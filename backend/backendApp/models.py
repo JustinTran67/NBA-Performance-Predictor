@@ -6,8 +6,6 @@ class Player(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=10)
     team = models.CharField(max_length=50)
-    height = models.FloatField(null=True, blank=True, help_text="Height in inches")
-    weight = models.FloatField(null=True, blank=True, help_text="Weight in pounds")
 
     def __str__(self):
         return self.name
@@ -34,23 +32,31 @@ class SeasonStat(models.Model):
         unique_together = ('player', 'season', 'team')
         ordering = ['player', 'season']
 
-#Might not need this model, but keeping for now.    
-class Prediction(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='predictions')
-    season = models.CharField(max_length=10)
-    model_version = models.CharField(max_length=50, null=True, blank=True)
-
-    predicted_points = models.FloatField(null=True, blank=True)
-    predicted_threep = models.FloatField(null=True, blank=True)
-    predicted_rebounds = models.FloatField(null=True, blank=True)
-    predicted_assists = models.FloatField(null=True, blank=True)
-    predicted_blocks = models.FloatField(null=True, blank=True)
-    predicted_steals = models.FloatField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
+class PlayerGameStat(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player_game_stats')
+    game_date = models.CharField(max_length=20, null=True, blank=True)
+    game_type = models.CharField(max_length=100, null=True, blank=True)
+    team = models.CharField(max_length=100, null=True, blank=True)
+    opponent = models.CharField(max_length=100, null=True, blank=True)
+    win = models.IntegerField(null=True, blank=True)
+    home = models.IntegerField(null=True, blank=True)
+    minutes = models.FloatField(null=True, blank=True)
+    points = models.FloatField(null=True, blank=True)
+    assists = models.FloatField(null=True, blank=True)
+    blocks = models.FloatField(null=True, blank=True)
+    steals = models.FloatField(null=True, blank=True)
+    fg_percent = models.FloatField(null=True, blank=True)
+    threepa = models.FloatField(null=True, blank=True)
+    threep = models.FloatField(null=True, blank=True)
+    threep_percent = models.FloatField(null=True, blank=True)
+    fta = models.FloatField(null=True, blank=True)
+    ft = models.FloatField(null=True, blank=True)
+    ft_percent = models.FloatField(null=True, blank=True)
+    total_rebounds = models.FloatField(null=True, blank=True)
+    personal_fouls = models.FloatField(null=True, blank=True)
+    turnovers = models.FloatField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"Prediction for {self.player.name} ({self.season})"
+        ordering = ['game_date']
+
+
