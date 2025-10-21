@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Player, SeasonStat
+from .models import Player, SeasonStat, PlayerGameStat
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,10 +7,15 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SeasonStatSerializer(serializers.ModelSerializer):
-    #Optional player information stored inside seasonstat.
     player = PlayerSerializer(read_only=True)
 
     class Meta:
         model = SeasonStat
         fields = '__all__'
 
+class PlayerGameStatSerializer(serializers.ModelSerializer):
+    player = PlayerSerializer(read_only=True)
+
+    class Meta:
+        model = PlayerGameStat
+        fields = '__all__'

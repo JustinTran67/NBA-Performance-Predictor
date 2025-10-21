@@ -1,8 +1,8 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Player, SeasonStat
-from .serializers import PlayerSerializer, SeasonStatSerializer
+from .models import Player, SeasonStat, PlayerGameStat
+from .serializers import PlayerSerializer, SeasonStatSerializer, PlayerGameStatSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 import joblib
 import numpy as np
@@ -30,6 +30,14 @@ class SeasonStatViewSet(viewsets.ModelViewSet):
         if season:
             return SeasonStat.objects.filter(season=season)
         return SeasonStat.objects.all()
+    
+class PlayerGameStatViewSet(viewsets.ModelViewSet):
+    queryset = PlayerGameStat.objects.all()
+    serializer_class = PlayerGameStatSerializer
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = ['player__name', 'team', 'opponent', 'game_date']
+    ordering_fields = ['points', 'rebounds', 'assists', 'steals', 'blocks']
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class PredictionViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny] #TODO: switch back to IsAuthenticatedOrReadOnly later
