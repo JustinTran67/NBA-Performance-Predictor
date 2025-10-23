@@ -58,5 +58,3 @@ class PlayerGameStat(models.Model):
 
     class Meta:
         ordering = ['game_date']
-
-

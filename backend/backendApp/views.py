@@ -8,6 +8,7 @@ import joblib
 import numpy as np
 import os
 from django.conf import settings
+from ml_models.data_preperation import add_recent_average_features
 
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
@@ -74,3 +75,36 @@ class PredictionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+class PlayerPredictionViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny] #TODO: switch back to IsAuthenticatedOrReadOnly later
+    model_path = os.path.join(settings.BASE_DIR, 'ml_models', 'player_multioutput_projection.pkl')
+    _model = None
+    
+    # lazy loading model to stop memory jam at runserver
+    @classmethod
+    def getModel(cls):
+        if cls._model is None:
+            cls._model = joblib.load(cls.model_path)
+        return cls._model
+
+    @action(detail=False, methods=['post'])
+    def predict(self, request):
+        try:
+            model = self.getModel()
+            data = request.data
+            features = [
+                # do i need to input the features for the rolling attributes?
+            ]
+            prediction = self.model.predict([features])
+            return Response({}) #TODO: format the multi-output predictions properly
+        
+        except KeyError as e:
+            return Response(
+                {'error' : f'Missing field: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {'error' : str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
