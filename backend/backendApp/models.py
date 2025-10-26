@@ -34,7 +34,7 @@ class SeasonStat(models.Model):
 
 class PlayerGameStat(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player_game_stats')
-    game_date = models.CharField(max_length=20, null=True, blank=True)
+    game_date = models.CharField(max_length=100, null=True, blank=True)
     game_type = models.CharField(max_length=100, null=True, blank=True)
     team = models.CharField(max_length=100, null=True, blank=True)
     opponent = models.CharField(max_length=100, null=True, blank=True)

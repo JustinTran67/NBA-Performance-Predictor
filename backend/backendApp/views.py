@@ -6,6 +6,7 @@ from .serializers import PlayerSerializer, SeasonStatSerializer, PlayerGameStatS
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 import joblib
 import numpy as np
+import pandas as pd
 import os
 from django.conf import settings
 from ml_models.data_preperation import add_recent_average_features
@@ -90,19 +91,130 @@ class PlayerPredictionViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def predict(self, request):
         try:
-            model = self.getModel()
-            data = request.data
-            features = [
-                # do i need to input the features for the rolling attributes?
-            ]
-            prediction = self.model.predict([features])
-            return Response({}) #TODO: format the multi-output predictions properly
-        
-        except KeyError as e:
-            return Response(
-                {'error' : f'Missing field: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST
+            player_name = request.data.get('player')
+            opponent = request.data.get('opponent')
+            home = request.data.get('home', 1)
+            game_date_str = request.data.get('game_date', None)
+
+            if not player_name or not opponent:
+                return Response(
+                    {'error' : 'Missing player or opponent field'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            player = Player.objects.filter(name__iexact=player_name).first()
+            if not player:
+                return Response(
+                    {'error' : f'Player "{player_name}" not found.'},
+                    status = status.HTTP_404_NOT_FOUND
+                )
+            
+            qs = PlayerGameStat.objects.filter(player=player)[:50].values( # TODO: find out if I also need to limit my model import size to fix crashing bug.
+                'player_id',
+                'game_date',
+                'opponent',
+                'home',
+                'minutes',
+                'points',
+                'assists',
+                'blocks',
+                'steals',
+                'fg_percent',
+                'threepa',
+                'threep',
+                'threep_percent',
+                'fta',
+                'ft',
+                'ft_percent',
+                'total_rebounds',
+                'personal_fouls',
+                'turnovers'
             )
+
+            df = pd.DataFrame(list(qs))
+            if df.empty:
+                return Response(
+                    {'error' : f'No game stats found for player "{player_name}".'},
+                    status = status.HTTP_400_BAD_REQUEST
+                )
+            
+            df['game_date'] = pd.to_datetime(df['game_date'])
+            last_game_date = df['game_date'].max()
+
+            if game_date_str:
+                game_date = pd.to_datetime(game_date_str)
+            else: 
+                game_date = last_game_date + pd.Timedelta(days=1)
+
+            # append future game row for rest days calculation.
+            df = pd.concat([df, pd.DataFrame([{
+                'player_id': player.pk,
+                'game_date': game_date,
+                'opponent': opponent,
+                'home': home,
+                'minutes': None,
+                'points': None,
+                'assists': None,
+                'blocks': None,
+                'steals': None,
+                'fg_percent': None,
+                'threepa': None,
+                'threep': None,
+                'threep_percent': None,
+                'fta': None,
+                'ft': None,
+                'ft_percent': None,
+                'total_rebounds': None,
+                'personal_fouls': None,
+                'turnovers': None,
+            }])])
+            
+            df = add_recent_average_features(df)
+
+            df['opponent'] = df['opponent'].astype('category').cat.codes
+
+            #get latest stats
+            latest = df.sort_values('game_date').iloc[-1]
+
+            feature_cols = [
+                'player_id',
+                'rest_days',
+                'opponent',
+                'home',
+                'avg_minutes_last5',
+                'avg_points_last5',
+                'avg_assists_last5',
+                'avg_blocks_last5',
+                'avg_steals_last5',
+                'avg_fg_percent_last5',
+                'avg_threepa_last5',
+                'avg_threep_last5',
+                'avg_threep_percent_last5',
+                'avg_fta_last5',
+                'avg_ft_last5',
+                'avg_ft_percent_last5',
+                'avg_total_rebounds_last5',
+                'avg_personal_fouls_last5',
+                'avg_turnovers_last5',
+                'avg_did_play_last10'
+            ]
+            features = latest[feature_cols].values.reshape(1, -1)
+
+            model = self.getModel()
+            prediction = model.predict(features)[0] #I do this because the model is multi-output
+
+            stat_names = [
+                'minutes', 'points', 'assists', 'blocks', 'steals', 'fg_percent',
+                'threepa', 'threep', 'threep_percent', 'fta', 'ft', 'ft_percent',
+                'total_rebounds', 'personal_fouls', 'turnovers'
+            ]
+            result = dict(zip(stat_names, prediction))
+            return Response({
+                'player': player_name,
+                'opponent': opponent,
+                'predictions': result,
+            })
+        
         except Exception as e:
             return Response(
                 {'error' : str(e)},
