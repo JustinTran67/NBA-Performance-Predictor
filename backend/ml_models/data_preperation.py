@@ -6,7 +6,7 @@ def add_recent_average_features(df):
     #turn 'game_date' into actual datetime
     df['game_date'] = pd.to_datetime(df['game_date'], errors='coerce')
 
-    df = df.sort_values(['player_id', 'game_date']).copy()
+    df = df.sort_values(['player_id', 'game_date'], ascending=[True, True]).copy() # Added ascending=True to ensure proper calculation of rolling averages.
 
     # check for null minutes and list it as 'did_play' = 0
     df['did_play'] = df['minutes'].apply(lambda x: 1 if x and x > 0 else 0)

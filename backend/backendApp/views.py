@@ -109,7 +109,7 @@ class PlayerPredictionViewSet(viewsets.ModelViewSet):
                     status = status.HTTP_404_NOT_FOUND
                 )
             
-            qs = PlayerGameStat.objects.filter(player=player)[:50].values( # TODO: find out if I also need to limit my model import size to fix crashing bug.
+            qs = PlayerGameStat.objects.filter(player=player).order_by('-game_date')[:50].values( #filter in reverse game_date so you get newest games!
                 'player_id',
                 'game_date',
                 'opponent',

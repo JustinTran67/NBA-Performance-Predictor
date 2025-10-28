@@ -13,7 +13,7 @@ export default function PlayerPredict() {
                     //'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    'player': 'Rui Hachimura', // or player_id
+                    'player': 'Austin Reaves', // or player_id
                     'opponent': 'Sacramento Kings',
                     'home': 0,
                     'game_date': '2025-10-26',
