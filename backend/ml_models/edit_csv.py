@@ -4,7 +4,7 @@ from email.utils import format_datetime
 import os
 import pandas as pd
 
-path = os.path.join('ml_models', 'PlayerStatistics.csv')
+path = os.path.join('backend', 'ml_models', 'PlayerStatistics.csv')
 df = pd.read_csv(path)
 
 df['gameDate'] = pd.to_datetime(df['gameDate'].astype(str).str[:10], errors='coerce').dt.date

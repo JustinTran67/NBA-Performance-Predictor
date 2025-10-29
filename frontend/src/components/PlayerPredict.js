@@ -13,10 +13,10 @@ export default function PlayerPredict() {
                     //'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    'player': 'Austin Reaves', // or player_id
-                    'opponent': 'Sacramento Kings',
+                    'player': 'Austin Reaves',
+                    'opponent': 'Minnesota Timberwolves',
                     'home': 0,
-                    'game_date': '2025-10-26',
+                    'game_date': '2025-10-29',
                 }),
             })
                 .then(res => {
@@ -39,8 +39,6 @@ export default function PlayerPredict() {
     
     return (
         <div>
-            <h1>Player Predict Component</h1>
-            <p>This component sends a POST request to predict player performance based on matchup data.</p>
             {predictionData ? (
                  <>
                     <h2>{predictionData.player} vs {predictionData.opponent}</h2>
