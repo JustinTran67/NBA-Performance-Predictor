@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Frontpage() {
+export default function Home() {
     const [players, setPlayers] = useState([]);
     const [filterPlayers, setFilterPlayers] = useState("");
 
@@ -11,7 +12,7 @@ export default function Frontpage() {
     }, []);
 
     return (
-        <div>
+        <div className="front-page">
             <h1>NextPlay AI</h1>
             <SearchBar filterPlayers={filterPlayers} setFilterPlayers={setFilterPlayers} />
             <PlayerList playerData={players} filterPlayers={filterPlayers} />
@@ -27,13 +28,13 @@ function SearchBar({filterPlayers, setFilterPlayers}) {
     )
 }
 
-function PlayerList({playerData, filterPlayers}) { // use playerData to generate list of players from backend.
+function PlayerList({playerData, filterPlayers}) {
     return (
         <div>
             <h2>Players</h2>
             <ul>
                 {playerData.map((player) => 
-                    {return (player.name.toLowerCase().includes(filterPlayers.toLowerCase())) ?
+                    {return (player.name.toLowerCase().includes(filterPlayers.toLowerCase()) || player.team.toLowerCase().includes(filterPlayers.toLowerCase())) ?
                         <li key={player.id}>
                             <PlayerCard name={player.name} team={player.team} />
                         </li>
@@ -45,9 +46,15 @@ function PlayerList({playerData, filterPlayers}) { // use playerData to generate
 }
 
 function PlayerCard({ name, team }) {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/prediction')
+    }
+
     return (
         <div>
-            <button>{name} | {team}</button>
+            <button value={name} onClick={handleClick}> {name} | {team}</button>
         </div>
     )
 }
