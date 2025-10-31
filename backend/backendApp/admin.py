@@ -5,6 +5,7 @@ from .models import Player, SeasonStat, PlayerGameStat
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('name', 'position', 'team')
+    list_filter = ('team', 'position')
     
 @admin.register(SeasonStat)
 class SeasonStatAdmin(admin.ModelAdmin):
